@@ -13,15 +13,21 @@ public class Game extends Canvas implements Runnable {
 
     private BufferedImage level = null;
 
+    public int ammo = 12;
+    public int hpPlayer = 100;
+    public int score = 0;
+    public int ballasTrigger = 0;
+    public int wanted = 0;
+
 
     public Game() {                                                             //calling the Window constructor
         new Window(1360, 768, "Trash GTA", this);
         start();                                                                //calling the start method
 
         handler = new Handler();
-        camera = new Camera(0,0);
-        this.addKeyListener(new KeyInput(handler));                             //adding keyListener
-        this.addMouseListener(new MouseInput(handler, camera));
+        camera = new Camera(0, 0);
+        this.addKeyListener(new KeyInput(handler, this));                             //adding keyListener
+        this.addMouseListener(new MouseInput(handler, camera, this));
 
         BufferedImageLoader loader = new BufferedImageLoader();
         level = loader.loadImage("/Trash GTA map.png");
@@ -71,18 +77,18 @@ public class Game extends Canvas implements Runnable {
         stop();
     }
 
-    public void tick(){                                                         //updates everything in the game
-        for (int i = 0; i < handler.object.size(); i++){                        //camera finding the player's position
-            if(handler.object.get(i).getId() == ID.Player){
+    public void tick() {                                                         //updates everything in the game
+        for (int i = 0; i < handler.object.size(); i++) {                        //camera finding the player's position
+            if (handler.object.get(i).getId() == ID.Player) {
                 camera.tick(handler.object.get(i));
             }
         }
         handler.tick();
     }
 
-    public void render(){                                                       //rendering Graphics class
+    public void render() {                                                       //rendering Graphics class
         BufferStrategy bs = this.getBufferStrategy();
-        if (bs == null){
+        if (bs == null) {
             this.createBufferStrategy(3);                            //preloading frames in the actual window. While 1 frame shows, the next 2 are already loaded
             return;
         }
@@ -92,13 +98,28 @@ public class Game extends Canvas implements Runnable {
         //////////////////////////////////                                      //drawing place begins
 
         g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(0,0,1360,768);
+        g.fillRect(0, 0, 1360, 768);
 
         g2d.translate(-camera.getX(), -camera.getY());                          //getting translated starts here
 
         handler.render(g);                                                      //needs to be under the background, so it will draw in front of it
 
         g2d.translate(camera.getX(), camera.getY());                            //getting translated ends here
+
+        g.setColor(Color.RED);                                                 //health bar
+        g.fillRect(5, 5, 200, 32);
+        g.setColor(Color.GREEN);
+        g.fillRect(5, 5, hpPlayer * 2, 32);
+        g.setColor(Color.BLACK);
+        g.drawRect(5, 5, 200, 32);
+        g.setColor(Color.WHITE);
+        g.drawString("Ammo: " + ammo, 5, 50);
+        g.setColor(Color.WHITE);
+        g.drawString("Wanted: " + wanted, 5, 75);
+        g.setColor(Color.WHITE);
+        g.drawString("Ballas Trigger: " + ballasTrigger, 5, 100);
+        g.setColor(Color.WHITE);
+        g.drawString("Score: " + score, 5, 125);
 
         //////////////////////////////////
         g.dispose();
@@ -123,7 +144,7 @@ public class Game extends Canvas implements Runnable {
                     handler.addObject(new PlayerChar(xx * 32, yy * 32, ID.Player, handler));
 
                 if (green == 254 && blue == 254) {                                                   //Cyan color
-                    handler.addObject(new Civilian(xx * 32, yy * 32, ID.Civilian, handler));
+                    handler.addObject(new Civilian(xx * 32, yy * 32, ID.Civilian, handler, this));
                 }
             }
         }

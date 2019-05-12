@@ -5,6 +5,7 @@ import java.awt.*;
 public class PlayerChar extends GameObject {
 
     Handler handler;
+    Game game;
 
     public PlayerChar(int x, int y, ID id, Handler handler) {
         super(x, y, id);

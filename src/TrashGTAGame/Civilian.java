@@ -6,13 +6,15 @@ import java.util.Random;
 public class Civilian extends GameObject {
 
     private Handler handler;
+    private Game game;
     Random r = new Random();
     int choose = 0;
     int hp = 100;
 
-    public Civilian(int x, int y, ID id, Handler handler) {
+    public Civilian(int x, int y, ID id, Handler handler,Game game) {
         super(x, y, id);
         this.handler = handler;
+        this.game = game;
 
     }
 
@@ -42,6 +44,7 @@ public class Civilian extends GameObject {
                 if(getBounds().intersects(tempObject.getBounds())){
                     hp -= 50;
                     handler.removeObject(tempObject);
+                    game.score = game.score/2;
                 }
             }
         }
