@@ -10,8 +10,8 @@ public class Bullet extends GameObject {
         super(x, y, id);
         this.handler = handler;
 
-        velX = (mx - x) / 10;                                                          //travel time
-        velY = (my - y) / 10;
+        velX = (mx - x) / 10;                                                         //travel time
+        velY = (my -y) /10;
     }
 
     @Override

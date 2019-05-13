@@ -10,8 +10,12 @@ public class Game extends Canvas implements Runnable {
     private Thread thread;
     private Handler handler;
     private Camera camera;
+    private Spawn spawn;
 
     private BufferedImage level = null;
+
+    public static final int WIDTH = 1360;
+    public static final int HEIGHT = 768;
 
     public int ammo = 12;
     public int hpPlayer = 100;
@@ -21,11 +25,12 @@ public class Game extends Canvas implements Runnable {
 
 
     public Game() {                                                             //calling the Window constructor
-        new Window(1360, 768, "Trash GTA", this);
+        new Window(WIDTH, HEIGHT, "Trash GTA", this);
         start();                                                                //calling the start method
 
         handler = new Handler();
         camera = new Camera(0, 0);
+        spawn = new Spawn(handler, this);
         this.addKeyListener(new KeyInput(handler, this));                             //adding keyListener
         this.addMouseListener(new MouseInput(handler, camera, this));
 
@@ -84,6 +89,7 @@ public class Game extends Canvas implements Runnable {
             }
         }
         handler.tick();
+        spawn.tick();
     }
 
     public void render() {                                                       //rendering Graphics class
@@ -133,19 +139,22 @@ public class Game extends Canvas implements Runnable {
         for (int xx = 0; xx < w; xx++) {
             for (int yy = 0; yy < h; yy++) {
                 int pixel = image.getRGB(xx, yy);
-                int red = (pixel >> 16) & 0xff;
+                int red = (pixel >> 16) & 0xff;                                 //masking
                 int green = (pixel >> 8) & 0xff;
                 int blue = (pixel) & 0xff;
 
-                if (red == 255)
+                if (red == 255 && green == 0 && blue == 0)
                     handler.addObject(new Block(xx * 32, yy * 32, ID.Block));
 
-                if (blue == 255)
+                if (blue == 255 && green == 0 && red == 0)
                     handler.addObject(new PlayerChar(xx * 32, yy * 32, ID.Player, handler));
 
-                if (green == 254 && blue == 254) {                                                   //Cyan color
+                if (green == 254 && blue == 254)                                                                  //Cyan color
                     handler.addObject(new Civilian(xx * 32, yy * 32, ID.Civilian, handler, this));
-                }
+                if (red == 215 && blue == 150 )
+                    handler.addObject(new Ballas(xx*32,yy*32,ID.Ballas, handler,this, spawn));
+
+
             }
         }
     }
@@ -153,4 +162,5 @@ public class Game extends Canvas implements Runnable {
     public static void main(String args[]) {
         new Game();
     }
+
 }

@@ -25,7 +25,11 @@ public class KeyInput extends KeyAdapter {
                 if (key == KeyEvent.VK_S) handler.setDown(true);
                 if (key == KeyEvent.VK_A) handler.setLeft(true);
                 if (key == KeyEvent.VK_D) handler.setRight(true);
-                if(key == KeyEvent.VK_R){
+                if(key == KeyEvent.VK_R){                                     // reloading and stopping movement
+                     handler.setUp(false);
+                     handler.setDown(false);
+                     handler.setLeft(false);
+                     handler.setRight(false);
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e1) {

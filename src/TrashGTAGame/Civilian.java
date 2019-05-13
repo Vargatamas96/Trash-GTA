@@ -44,13 +44,15 @@ public class Civilian extends GameObject {
                 if(getBounds().intersects(tempObject.getBounds())){
                     hp -= 50;
                     handler.removeObject(tempObject);
-                    game.score = game.score/2;
                 }
             }
         }
 
-        if(hp <= 0) handler.removeObject(this);
-
+        if(hp <= 0) {
+            handler.removeObject(this);
+            game.wanted = game.wanted + 1;
+            game.score = game.score/2;
+        }
     }
 
     @Override
