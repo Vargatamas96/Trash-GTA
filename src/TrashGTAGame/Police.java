@@ -2,7 +2,7 @@ package TrashGTAGame;
 
 import java.awt.*;
 
-public class Ballas extends GameObject {
+public class Police extends GameObject {
 
     private Handler handler;
     private Game game;
@@ -14,7 +14,7 @@ public class Ballas extends GameObject {
 
     int hp = 100;
 
-    public Ballas(int x, int y, ID id, Handler handler, Game game, Spawn spawn) {
+    public Police(int x, int y, ID id, Handler handler, Game game, Spawn spawn) {
         super(x, y, id);
         this.handler = handler;
         this.game = game;
@@ -29,7 +29,7 @@ public class Ballas extends GameObject {
     @Override
     public void tick() {
 
-        if (game.ballasTrigger >= 1) {
+        if (game.wanted >= 1) {
             timer--;
             x += velX;
             y += velY;
@@ -46,14 +46,14 @@ public class Ballas extends GameObject {
                 handler.addObject(new EnemyBullet((int) x + 16, (int) y + 24, ID.EnemyBullet, handler, (int) player.getX(), (int) player.getY()));
                 timer += 100;
             }
-            }
+        }
 
 
         if (hp <= 0) {
             handler.removeObject(this);
-            game.ballasTrigger = game.ballasTrigger + 1;
-            game.score = game.score + 100;
-            spawn.ballasCounter -= 1;
+            if (game.wanted <= 5) game.wanted = game.wanted + 1;
+            game.score = game.score + 20;
+            spawn.policeCounter -= 1;
         }
 
         for (int i = 0; i < handler.object.size(); i++) {
@@ -78,7 +78,7 @@ public class Ballas extends GameObject {
 
     @Override
     public void render(Graphics g) {
-        g.setColor(new Color(0xD70096));
+        g.setColor(new Color(0x1E1DD7));
         g.fillRect((int) x, (int) y, 32, 32);
     }
 

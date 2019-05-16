@@ -4,12 +4,15 @@ import java.awt.*;
 
 public class PlayerChar extends GameObject {
 
-    Handler handler;
-    Game game;
+    private Handler handler;
+    private Game game;
 
-    public PlayerChar(int x, int y, ID id, Handler handler) {
+
+
+    public PlayerChar(int x, int y, ID id, Handler handler, Game game) {
         super(x, y, id);
         this.handler = handler;
+        this.game = game;
     }
 
     @Override
@@ -52,21 +55,26 @@ public class PlayerChar extends GameObject {
                     x += velX * (-1);
                     y += velY * (-1);
                 }
-
             }
 
+            if (tempObject.getId() == ID.EnemyBullet) {
+                if (getBounds().intersects(tempObject.getBounds())) {
+                    handler.removeObject(tempObject);
+                    game.hpPlayer -= 5;
+                }
+            }
         }
     }
 
     @Override
     public void render(Graphics g) {
         g.setColor(Color.GREEN);
-        g.fillRect(x, y, 32, 48);
+        g.fillRect((int)x, (int)y, 32, 48);
 
     }
 
     @Override
     public Rectangle getBounds() {
-        return new Rectangle(x, y, 32, 48);
+        return new Rectangle((int)x, (int)y, 32, 48);
     }
 }

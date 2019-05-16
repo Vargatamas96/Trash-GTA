@@ -4,11 +4,11 @@ import java.awt.*;
 
 public abstract class GameObject {
 
-    protected int x, y;
+    protected float x, y;
     protected float velX = 0, velY = 0;
     protected ID id;
 
-    public GameObject(int x, int y, ID id) {                                           //for positions
+    public GameObject(float x, float y, ID id) {                                           //for positions
         this.x = x;
         this.y = y;
         this.id = id;
@@ -20,13 +20,20 @@ public abstract class GameObject {
 
     public abstract Rectangle getBounds();                                      //for hit box or collision
 
-    public int getX() {                                                         //setters and getters for easy position info
+    public float getX() {
         return x;
     }
 
-    public int getY() {
+    public void setX(float x) {
+        this.x = x;
+    }
 
+    public float getY() {
         return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
     }
 
     public float getVelX() {

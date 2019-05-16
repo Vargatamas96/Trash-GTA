@@ -50,7 +50,7 @@ public class Civilian extends GameObject {
 
         if(hp <= 0) {
             handler.removeObject(this);
-            game.wanted = game.wanted + 1;
+            if (game.wanted <= 5) game.wanted = game.wanted + 1;
             game.score = game.score/2;
         }
     }
@@ -58,16 +58,16 @@ public class Civilian extends GameObject {
     @Override
     public void render(Graphics g) {
         g.setColor(Color.CYAN);
-        g.fillRect(x, y, 32, 32);
+        g.fillRect((int)x, (int)y, 32, 32);
 
     }
 
     @Override
     public Rectangle getBounds() {
-        return new Rectangle(x, y, 32, 32);
+        return new Rectangle((int)x, (int)y, 32, 32);
     }
 
     public Rectangle getBoundsBig() {
-        return new Rectangle(x - 16, y - 16, 64, 64);
+        return new Rectangle((int)x - 16, (int)y - 16, 64, 64);
     }
 }

@@ -23,7 +23,7 @@ public class MouseInput extends MouseAdapter {
             GameObject tempObject = handler.object.get(i);
 
             if (tempObject.getId() == ID.Player && game.ammo >= 1) {
-                handler.addObject(new Bullet(tempObject.getX() + 16, tempObject.getY() + 24, ID.Bullet, handler, mx, my));               //position from where the bullet starts and where it is travel to
+                handler.addObject(new Bullet((int)tempObject.getX() + 16, (int)tempObject.getY() + 24, ID.Bullet, handler, mx, my));               //position from where the bullet starts and where it is travel to
                 game.ammo--;
             }
         }

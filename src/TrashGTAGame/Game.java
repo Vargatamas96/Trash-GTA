@@ -1,8 +1,10 @@
 package TrashGTAGame;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.*;
 
 public class Game extends Canvas implements Runnable {
 
@@ -19,7 +21,9 @@ public class Game extends Canvas implements Runnable {
 
     public int ammo = 12;
     public int hpPlayer = 100;
+
     public int score = 0;
+    public String highScore = "";
     public int ballasTrigger = 0;
     public int wanted = 0;
 
@@ -38,6 +42,10 @@ public class Game extends Canvas implements Runnable {
         level = loader.loadImage("/Trash GTA map.png");
 
         loadLevel(level);
+
+        if (highScore.equals("")) {
+            highScore = this.GetHighScoreValue();
+        }
     }
 
     private void start() {                                                      //starting the thread
@@ -47,8 +55,9 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void stop() {                                                       //stopping the thread
-        isRunning = false;
+            isRunning = false;
         try {                                                                   //trying to detect errors
+            CheckScore();
             thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -77,6 +86,9 @@ public class Game extends Canvas implements Runnable {
             if (System.currentTimeMillis() - timer > 1000) {
                 timer += 1000;
                 frames = 0;
+            }
+            if (hpPlayer <= 0){
+                isRunning = false;
             }
         }
         stop();
@@ -126,8 +138,10 @@ public class Game extends Canvas implements Runnable {
         g.drawString("Ballas Trigger: " + ballasTrigger, 5, 100);
         g.setColor(Color.WHITE);
         g.drawString("Score: " + score, 5, 125);
+        DrawScore(g);
 
         //////////////////////////////////
+
         g.dispose();
         bs.show();
     }
@@ -147,14 +161,72 @@ public class Game extends Canvas implements Runnable {
                     handler.addObject(new Block(xx * 32, yy * 32, ID.Block));
 
                 if (blue == 255 && green == 0 && red == 0)
-                    handler.addObject(new PlayerChar(xx * 32, yy * 32, ID.Player, handler));
+                    handler.addObject(new PlayerChar(xx * 32, yy * 32, ID.Player, handler, this));
 
                 if (green == 254 && blue == 254)                                                                  //Cyan color
                     handler.addObject(new Civilian(xx * 32, yy * 32, ID.Civilian, handler, this));
-                if (red == 215 && blue == 150 )
-                    handler.addObject(new Ballas(xx*32,yy*32,ID.Ballas, handler,this, spawn));
+                if (red == 215 && blue == 150)
+                    handler.addObject(new Ballas(xx * 32, yy * 32, ID.Ballas, handler, this, spawn));
 
 
+            }
+        }
+    }
+
+    public String GetHighScoreValue() {
+
+        FileReader readFile = null;
+        BufferedReader reader = null;
+
+        try {
+            readFile = new FileReader("highscore.dat");                              //users can't edit it :))
+            reader = new BufferedReader(readFile);
+            return reader.readLine();
+        } catch (Exception e) {
+            return "Nobody:0";
+        } finally {
+            try {
+                if (reader != null)
+                    reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void DrawScore(Graphics g) {
+        g.drawString("Score: " + score, 0, HEIGHT * WIDTH);
+        g.drawString("Highscore: " + highScore, 5, 150);
+    }
+
+    public void CheckScore() {                                                                                                  //writes the highscore to the file
+        if (score > Integer.parseInt(highScore.split(":")[1]))                                                            //setting a new record, splitting the string into integer
+        {
+            String name = JOptionPane.showInputDialog("New Highscore! \nenter your name");
+            highScore = name + ":" + score;
+
+            File scoreFile = new File("highscore.dat");
+            if (!scoreFile.exists()) {
+                try {
+                    scoreFile.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            FileWriter writeFile = null;
+            BufferedWriter writer = null;
+            try {
+                writeFile = new FileWriter(scoreFile);
+                writer = new BufferedWriter(writeFile);
+                writer.write(this.highScore);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (writer != null)
+                        writer.close();
+                } catch (Exception e) {
+                }
             }
         }
     }

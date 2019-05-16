@@ -2,16 +2,18 @@ package TrashGTAGame;
 
 import java.awt.*;
 
-public class Bullet extends GameObject {
+public class EnemyBullet extends GameObject {
 
     private Handler handler;
 
-    public Bullet(int x, int y, ID id, Handler handler, int mx, int my) {
+
+
+    public EnemyBullet(int x, int y, ID id, Handler handler, float playerx, float playery) {
         super(x, y, id);
         this.handler = handler;
 
-        velX = (mx - x) / 10;                                                         //travel time
-        velY = (my - y) / 10;
+        velX = (playerx - x) / 10;                                                         //travel time
+        velY = (playery - y) / 10;
     }
 
     @Override
@@ -31,14 +33,14 @@ public class Bullet extends GameObject {
         }
     }
 
-    @Override
-    public void render(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillOval((int)x, (int)y, 8, 8);
-    }
+        @Override
+        public void render (Graphics g){
+            g.setColor(Color.BLACK);
+            g.fillOval((int) x, (int) y, 8, 8);
+        }
 
-    @Override
-    public Rectangle getBounds() {
-        return new Rectangle((int)x, (int)y, 16, 16);
+        @Override
+        public Rectangle getBounds () {
+            return new Rectangle((int) x, (int) y, 16, 16);
+        }
     }
-}
