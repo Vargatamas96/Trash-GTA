@@ -6,13 +6,13 @@ public class PlayerChar extends GameObject {
 
     private Handler handler;
     private Game game;
+    protected String username;
 
-
-
-    public PlayerChar(int x, int y, ID id, Handler handler, Game game) {
+    public PlayerChar(int x, int y, String username, ID id, Handler handler, Game game) {
         super(x, y, id);
         this.handler = handler;
         this.game = game;
+        this.username = username;
     }
 
     @Override
@@ -69,12 +69,16 @@ public class PlayerChar extends GameObject {
     @Override
     public void render(Graphics g) {
         g.setColor(Color.GREEN);
-        g.fillRect((int)x, (int)y, 32, 48);
+        g.fillRect((int)x, (int)y, 32, 32);
 
     }
 
     @Override
     public Rectangle getBounds() {
-        return new Rectangle((int)x, (int)y, 32, 48);
+        return new Rectangle((int)x, (int)y, 32, 32);
+    }
+
+    public String getUsername(){
+    return this.username;
     }
 }

@@ -1,10 +1,15 @@
 package TrashGTAGame;
 
+import Multiplayer.GameClient;
+import Multiplayer.GameServer;
+import Multiplayer.Packet00Login;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import javax.swing.JFrame;
 
 public class Game extends Canvas implements Runnable {
 
@@ -13,6 +18,10 @@ public class Game extends Canvas implements Runnable {
     private Handler handler;
     private Camera camera;
     private Spawn spawn;
+    private GameClient socketClient;
+    private GameServer socketServer;
+    private JFrame frame;
+    private PlayerChar playerChar;
 
     private BufferedImage level = null;
 
@@ -35,6 +44,22 @@ public class Game extends Canvas implements Runnable {
         handler = new Handler();
         camera = new Camera(0, 0);
         spawn = new Spawn(handler, this);
+
+        if (JOptionPane.showConfirmDialog(this, "Do you want to run the server?") == 0) {
+            socketServer = new GameServer(this, handler);
+            socketServer.start();
+        }
+
+        playerChar = new PlayerMP(300, 300, JOptionPane.showInputDialog(this, "Please enter username: "), ID.PlayerMP, handler, this, null, -1);
+        handler.addObject(playerChar);
+        Packet00Login loginPacket = new Packet00Login(playerChar.getUsername());
+
+        if(socketServer != null){
+            socketServer.addConnection ((PlayerMP)playerChar, loginPacket);
+        }
+        socketClient = new GameClient(this, "localhost", handler);
+        socketClient.start();
+        loginPacket.writeData(socketClient);
         this.addKeyListener(new KeyInput(handler, this));                             //adding keyListener
         this.addMouseListener(new MouseInput(handler, camera, this));
 
@@ -55,7 +80,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void stop() {                                                       //stopping the thread
-            isRunning = false;
+        isRunning = false;
         try {                                                                   //trying to detect errors
             CheckScore();
             thread.join();
@@ -87,7 +112,7 @@ public class Game extends Canvas implements Runnable {
                 timer += 1000;
                 frames = 0;
             }
-            if (hpPlayer <= 0){
+            if (hpPlayer <= 0) {
                 isRunning = false;
             }
         }
@@ -161,14 +186,12 @@ public class Game extends Canvas implements Runnable {
                     handler.addObject(new Block(xx * 32, yy * 32, ID.Block));
 
                 if (blue == 255 && green == 0 && red == 0)
-                    handler.addObject(new PlayerChar(xx * 32, yy * 32, ID.Player, handler, this));
+                    handler.addObject(new PlayerChar(xx * 32, yy * 32, playerChar.username, ID.Player, handler, this));
 
                 if (green == 254 && blue == 254)                                                                  //Cyan color
                     handler.addObject(new Civilian(xx * 32, yy * 32, ID.Civilian, handler, this));
                 if (red == 215 && blue == 150)
                     handler.addObject(new Ballas(xx * 32, yy * 32, ID.Ballas, handler, this, spawn));
-
-
             }
         }
     }
@@ -202,7 +225,9 @@ public class Game extends Canvas implements Runnable {
     public void CheckScore() {                                                                                                  //writes the highscore to the file
         if (score > Integer.parseInt(highScore.split(":")[1]))                                                            //setting a new record, splitting the string into integer
         {
-            String name = JOptionPane.showInputDialog("New Highscore! \nenter your name");
+            frame = (JFrame) new Frame();
+            JOptionPane.showMessageDialog(frame, "");
+            String name = this.getName();
             highScore = name + ":" + score;
 
             File scoreFile = new File("highscore.dat");
