@@ -14,7 +14,7 @@ public class GameClient extends Thread {
     private Game game;
     private Handler handler;
 
-    public GameClient (Game game, String ipAddress, Handler handler) {
+    public GameClient(Game game, String ipAddress, Handler handler) {
         this.game = game;
         this.handler = handler;
         try {
@@ -29,7 +29,7 @@ public class GameClient extends Thread {
 
     public void run() {
         while (true) {
-            byte[] data = new byte [1024];
+            byte[] data = new byte[1024];
             DatagramPacket packet = new DatagramPacket(data, data.length);
             try {
                 socket.receive(packet);
@@ -52,28 +52,32 @@ public class GameClient extends Thread {
                 break;
             case LOGIN:
                 packet = new Packet00Login(data);
-                System.out.println("["+ address.getHostAddress()+":"+port+"] "+ ((Packet00Login)packet).getUsername() + "has joined the game...");
-                PlayerMP player = new PlayerMP(800, 800,((Packet00Login)packet).getUsername(), ID.PlayerMP, game, address, port);
-                handler.addObject(player);
+                handleLogin((Packet00Login) packet, address, port);
                 break;
             case DISCONNECT:
                 packet = new Packet01Disconnect(data);
-                System.out.println("["+ address.getHostAddress()+":"+port+"] "+ ((Packet01Disconnect)packet).getUsername() + "Has left the ghetto...");
+                System.out.println("[" + address.getHostAddress() + ":" + port + "] " + ((Packet01Disconnect) packet).getUsername() + "Has left the ghetto...");
                 //handler.removePlayerMP(((Packet01Disconnect) packet).getUsername());
                 break;
             case MOVE:
                 packet = new Packet02Move(data);
-                handleMove((Packet02Move)packet);
+                handleMove((Packet02Move) packet);
         }
     }
 
-    public void sendData(byte[] data){
-        DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, 1331);
+    public void sendData(byte[] data) {
+        DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, 1332);
         try {
             socket.send(packet);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void handleLogin(Packet00Login packet, InetAddress address, int port) {
+        System.out.println("[" + address.getHostAddress() + ":" + port + "] " + packet.getUsername() + "has joined the game...");
+        PlayerMP player = new PlayerMP(packet.getX(), packet.getY(), packet.getUsername(), ID.PlayerMP, game, address, port);
+        handler.addObject(player);
     }
 
     private void handleMove(Packet02Move packet) {

@@ -21,7 +21,7 @@ public class GameServer extends Thread {
         this.game = game;
         this.handler = handler;
         try {
-            this.socket = new DatagramSocket(1331);
+            this.socket = new DatagramSocket(1332);
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -83,8 +83,11 @@ public class GameServer extends Thread {
                 }
                 alreadyConnected = true;
             } else {
+                //relay to the current connected player, that there is a new player
                 sendData(packet.getData(), p.ipAddress, p.port);
-                packet = new Packet00Login(p.getUsername());
+
+                //relay to the new player that the currently connect player exists
+                packet = new Packet00Login(p.getUsername(),(int) p.x, (int) p.y);
                 sendData(packet.getData(), player.ipAddress, player.port);
             }
         }
