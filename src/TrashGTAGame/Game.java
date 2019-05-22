@@ -22,6 +22,7 @@ public class Game extends Canvas implements Runnable {
     private GameServer socketServer;
     private JFrame frame;
     private PlayerChar playerChar;
+    private PlayerMP playerMP;
 
     private BufferedImage level = null;
 
@@ -50,16 +51,16 @@ public class Game extends Canvas implements Runnable {
             socketServer.start();
         }
 
-        playerChar = new PlayerMP(300, 300, JOptionPane.showInputDialog(this, "Please enter username: "), ID.PlayerMP, handler, this, null, -1);
-        handler.addObject(playerChar);
-        Packet00Login loginPacket = new Packet00Login(playerChar.getUsername());
-
-        if(socketServer != null){
-            socketServer.addConnection ((PlayerMP)playerChar, loginPacket);
+        if (socketServer != null) {
+            socketClient = new GameClient(this, "localhost", handler);
+            socketClient.start();
+            playerMP = new PlayerMP(300, 300, JOptionPane.showInputDialog(this, "Please enter username: "), ID.PlayerMP, handler, this, null, -1);
+            handler.addObject(playerMP);
+            Packet00Login loginPacket = new Packet00Login(playerMP.getUsername());
+            socketServer.addConnection(playerMP, loginPacket);
+            loginPacket.writeData(socketClient);
         }
-        socketClient = new GameClient(this, "localhost", handler);
-        socketClient.start();
-        loginPacket.writeData(socketClient);
+
         this.addKeyListener(new KeyInput(handler, this));                             //adding keyListener
         this.addMouseListener(new MouseInput(handler, camera, this));
 
@@ -67,6 +68,7 @@ public class Game extends Canvas implements Runnable {
         level = loader.loadImage("/Trash GTA map.png");
 
         loadLevel(level);
+
 
         if (highScore.equals("")) {
             highScore = this.GetHighScoreValue();
@@ -186,7 +188,7 @@ public class Game extends Canvas implements Runnable {
                     handler.addObject(new Block(xx * 32, yy * 32, ID.Block));
 
                 if (blue == 255 && green == 0 && red == 0)
-                    handler.addObject(new PlayerChar(xx * 32, yy * 32, playerChar.username, ID.Player, handler, this));
+                    handler.addObject(new PlayerChar(xx * 32, yy * 32, JOptionPane.showInputDialog(this, "Please enter username: "), ID.Player, handler, this));
 
                 if (green == 254 && blue == 254)                                                                  //Cyan color
                     handler.addObject(new Civilian(xx * 32, yy * 32, ID.Civilian, handler, this));

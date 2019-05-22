@@ -12,7 +12,7 @@ public class GameServer extends Thread {
     private DatagramSocket socket;
     private Game game;
     private Handler handler;
-    private List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();
+    private List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();                        //list of players currently connected to the server
 
     public GameServer(Game game, Handler handler) {
         this.game = game;
@@ -39,7 +39,7 @@ public class GameServer extends Thread {
 
     private void parsePacket(byte[] data, InetAddress address, int port) {
         String message = new String(data).trim();
-        Packet.PacketTypes type = Packet.lookupPacket((message.substring(0, 2)));
+        Packet.PacketTypes type = Packet.lookupPacket(message.substring(0, 2));
         Packet packet = null;
         switch (type) {
             default:
@@ -47,7 +47,7 @@ public class GameServer extends Thread {
                 break;
             case Login:
                 packet = new Packet00Login(data);
-                System.out.println("[" + address.getHostAddress() + ":" + port + "]" +((Packet00Login)packet).getUsername() + " has connected.");
+                System.out.println("[" + address.getHostAddress() + ":" + port + "] " +((Packet00Login)packet).getUsername() + " has connected.");
                 PlayerMP player = new PlayerMP(300, 300, ((Packet00Login) packet).getUsername(),ID.PlayerMP, game, address, port);
                 this.addConnection(player, (Packet00Login)packet);
                 break;

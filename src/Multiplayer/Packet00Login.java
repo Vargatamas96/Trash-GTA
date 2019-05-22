@@ -4,12 +4,12 @@ public class Packet00Login extends Packet {
 
     private String username;
 
-    public Packet00Login(byte[] data) {
+    public Packet00Login(byte[] data) {                             //for retrieving the data
         super(00);
         this.username = readData(data);
     }
 
-    public Packet00Login(String username) {
+    public Packet00Login(String username) {                         //for sending from the original instance
         super(00);
         this.username = username;
     }

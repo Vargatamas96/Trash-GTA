@@ -9,7 +9,7 @@ public abstract class Packet {
 
         private int packetId;
 
-        private PacketTypes(int packetId) {
+        private PacketTypes(int packetId) {                                         //constructor
             this.packetId = packetId;
         }
 
@@ -22,7 +22,7 @@ public abstract class Packet {
 
     public Packet(int packetId) {
         this.packetId = (byte) packetId;
-    }
+    }                 //constructor
 
     public abstract void writeData(GameClient client);
 
@@ -50,7 +50,7 @@ public abstract class Packet {
             }
         }
 
-        return  PacketTypes.Invalid;
+        return PacketTypes.Invalid;
     }
 
 }
