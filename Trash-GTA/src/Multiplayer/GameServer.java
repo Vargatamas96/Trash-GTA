@@ -68,6 +68,10 @@ public class GameServer extends Thread {
                 packet = new Packet02Move(data);
                 System.out.println(((Packet02Move)packet).getUsername()+ "has moved to " + ((Packet02Move)packet).getX()+ "," + ((Packet02Move)packet).getY());
                 this.handleMove(((Packet02Move)packet));
+            case SHOOT:
+                packet = new Packet03Shoot(data);
+                System.out.println(((Packet03Shoot)packet).getX() + " " + ((Packet03Shoot)packet).getY() + " " + ((Packet03Shoot)packet).getMx() + " " + ((Packet03Shoot)packet).getMy());
+/*                this.handleBullet ((Packet03Shoot)packet);*/
         }
     }
 
@@ -144,4 +148,10 @@ public class GameServer extends Thread {
             packet.writeData(this);
         }
     }
+
+/*    private void handleBullet(Packet03Shoot packet) {
+        if (getPlayerMP(packet.getUsername()) != null) {
+
+        }
+    }*/
 }

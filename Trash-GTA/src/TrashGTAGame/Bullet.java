@@ -1,5 +1,8 @@
 package TrashGTAGame;
 
+import Multiplayer.Packet02Move;
+import Multiplayer.Packet03Shoot;
+
 import java.awt.*;
 
 public class Bullet extends GameObject {
@@ -27,9 +30,12 @@ public class Bullet extends GameObject {
                     handler.removeObject(this);
                 }
             }
-
         }
+/*        Packet03Shoot packet = new Packet03Shoot(this.x, this.y,this.mx,this.my);
+        packet.writeData(Game.game.socketClient);*/
     }
+
+
 
     @Override
     public void render(Graphics g) {
