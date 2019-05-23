@@ -9,24 +9,27 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import javax.swing.JFrame;
 
 public class Game extends Canvas implements Runnable {
 
     private boolean isRunning = false;
+    private BufferedImage level = null;
     private Thread thread;
     private Handler handler;
     private Camera camera;
     private Spawn spawn;
+    private PlayerMP playerMP;
+
     public JFrame frame;
     public PlayerChar playerChar;
-    private PlayerMP playerMP;
     public GameClient socketClient;
     public GameServer socketServer;
-    public WindowHandler windowHandler;
-    public static Game game;
+    boolean master = true;
 
-    private BufferedImage level = null;
+    public static Game game;
 
     public static final int WIDTH = 1360;
     public static final int HEIGHT = 768;
@@ -34,41 +37,40 @@ public class Game extends Canvas implements Runnable {
     public int ammo = 12;
     public int hpPlayer = 100;
 
-    public int score = 0;
     public String highScore = "";
+    public int score = 0;
     public int ballasTrigger = 0;
     public int wanted = 0;
 
-    public Game() {                                                             //calling the Window constructor
+    public Game() { //calling the Window constructor
         new Window(WIDTH, HEIGHT, "Trash GTA", this);
-                                                                                //calling the start method
+        //calling the start method
         handler = new Handler();
         camera = new Camera(0, 0);
         spawn = new Spawn(handler, this);
         game = this;
+        this.master = master;
 
+        this.addKeyListener(new KeyInput(handler, this)); //adding keyListener
+        this.addMouseListener(new MouseInput(handler, camera, this)); //adding mouseListener
 
-
-        this.addKeyListener(new KeyInput(handler, this));                             //adding keyListener
-        this.addMouseListener(new MouseInput(handler, camera, this));
-
-        BufferedImageLoader loader = new BufferedImageLoader();
+        BufferedImageLoader loader = new BufferedImageLoader();//loading the level from PNG
         level = loader.loadImage("/Trash GTA map.png");
 
         start();
 
-        playerChar = new PlayerMP(750, 750, JOptionPane.showInputDialog(this, "Please enter username: "), ID.PlayerMP, handler, this, null, -1);
+        try {
+            playerChar = new PlayerMP(750, 750, JOptionPane.showInputDialog(this, "Please enter username: "), ID.PlayerMP, handler, this, InetAddress.getLocalHost(), 1332);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
         handler.addObject(playerChar);
-        Packet00Login loginPacket = new Packet00Login(playerChar.getUsername(), (int) playerChar.x, (int)playerChar.y);
+        Packet00Login loginPacket = new Packet00Login(playerChar.getUsername(), (int) playerChar.x, (int) playerChar.y);
 
-        if (socketServer != null){
+        if (socketServer != null) {
             socketServer.addConnection((PlayerMP) playerChar, loginPacket);
         }
         loadLevel(level);
-
-        windowHandler = new WindowHandler(this);
-
-        //socketClient.sendData("ping".getBytes());
 
         loginPacket.writeData(socketClient);
 
@@ -77,23 +79,26 @@ public class Game extends Canvas implements Runnable {
         }
     }
 
-    private void start() {                                                      //starting the thread
+    private void start() {  //starting the thread
         isRunning = true;
-        thread = new Thread(this);                                       //calling this class's run() method
+        thread = new Thread(this); //calling this class's run() method
         thread.start();
 
-        if(JOptionPane.showConfirmDialog(this,"Do you want to run the server?") == 0) {
+        if (JOptionPane.showConfirmDialog(this, "Do you want to run the server?") == 0) {
             socketServer = new GameServer(this, handler);
             socketServer.start();
+            master = true;
+        } else {
+            master = false;
         }
 
         socketClient = new GameClient(this, "localhost", handler);
         socketClient.start();
     }
 
-    private void stop() {                                                       //stopping the thread
+    private void stop() { //stopping the thread
         isRunning = false;
-        try {                                                                   //trying to detect errors
+        try { //trying to detect errors
             CheckScore();
             thread.join();
         } catch (InterruptedException e) {
@@ -101,7 +106,7 @@ public class Game extends Canvas implements Runnable {
         }
     }
 
-    public void run() {                                                         //game loop *yay for Notch*
+    public void run() { //game loop
         this.requestFocus();
         long lastTime = System.nanoTime();
         double amountOfTicks = 60.0;
@@ -131,8 +136,8 @@ public class Game extends Canvas implements Runnable {
         stop();
     }
 
-    public void tick() {                                                         //updates everything in the game
-        for (int i = 0; i < handler.object.size(); i++) {                        //camera finding the player's position
+    public void tick() {                                        //updates everything in the game
+        for (int i = 0; i < handler.object.size(); i++) {       //camera finding the player's position
             if (handler.object.get(i).getId() == ID.PlayerMP) {
                 camera.tick(handler.object.get(i));
             }
@@ -141,27 +146,26 @@ public class Game extends Canvas implements Runnable {
         spawn.tick();
     }
 
-    public void render() {                                                       //rendering Graphics class
+    public void render() {                                        //rendering Graphics class
         BufferStrategy bs = this.getBufferStrategy();
         if (bs == null) {
-            this.createBufferStrategy(3);                            //preloading frames in the actual window. While 1 frame shows, the next 2 are already loaded
+            this.createBufferStrategy(3);               //preloading frames in the actual window. While 1 frame shows, the next 2 are already loaded
             return;
         }
 
         Graphics g = bs.getDrawGraphics();
-        Graphics2D g2d = (Graphics2D) g;                                        //casting
-        //////////////////////////////////                                      //drawing place begins
+        Graphics2D g2d = (Graphics2D) g;                            //casting
+        //////////////////////////////////                          //drawing place begins
 
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(0, 0, 1360, 768);
 
-        g2d.translate(-camera.getX(), -camera.getY());                          //getting translated starts here
+        g2d.translate(-camera.getX(), -camera.getY());               //getting translated starts here
 
-        handler.render(g);                                                      //needs to be under the background, so it will draw in front of it
+        handler.render(g);                                           //needs to be under the background, so it will draw in front of it
+        g2d.translate(camera.getX(), camera.getY());                 //getting translated ends here
 
-        g2d.translate(camera.getX(), camera.getY());                            //getting translated ends here
-
-        g.setColor(Color.RED);                                                 //health bar
+        g.setColor(Color.RED);                                        //health bar
         g.fillRect(5, 5, 200, 32);
         g.setColor(Color.GREEN);
         g.fillRect(5, 5, hpPlayer * 2, 32);
@@ -183,24 +187,20 @@ public class Game extends Canvas implements Runnable {
         bs.show();
     }
 
-    private void loadLevel(BufferedImage image) {                                //loading the level, drawing the blocks
+    private void loadLevel(BufferedImage image) {        //loading the level, drawing the blocks
         int w = image.getWidth();
         int h = image.getHeight();
 
         for (int xx = 0; xx < w; xx++) {
             for (int yy = 0; yy < h; yy++) {
                 int pixel = image.getRGB(xx, yy);
-                int red = (pixel >> 16) & 0xff;                                 //masking
+                int red = (pixel >> 16) & 0xff;           //masking
                 int green = (pixel >> 8) & 0xff;
                 int blue = (pixel) & 0xff;
 
                 if (red == 255 && green == 0 && blue == 0)
                     handler.addObject(new Block(xx * 32, yy * 32, ID.Block));
-
-               // if (blue == 255 && green == 0 && red == 0)
-
-
-                if (green == 254 && blue == 254)                                                                  //Cyan color
+                if (green == 254 && blue == 254) //Cyan color for civilians
                     handler.addObject(new Civilian(xx * 32, yy * 32, ID.Civilian, handler, this));
                 if (red == 215 && blue == 150)
                     handler.addObject(new Ballas(xx * 32, yy * 32, ID.Ballas, handler, this, spawn));
@@ -214,7 +214,7 @@ public class Game extends Canvas implements Runnable {
         BufferedReader reader = null;
 
         try {
-            readFile = new FileReader("highscore.dat");                              //users can't edit it :))
+            readFile = new FileReader("highscore.dat");   //.dat so users can't edit it
             reader = new BufferedReader(readFile);
             return reader.readLine();
         } catch (Exception e) {
@@ -234,12 +234,12 @@ public class Game extends Canvas implements Runnable {
         g.drawString("Highscore: " + highScore, 5, 150);
     }
 
-    public void CheckScore() {                                                                                                  //writes the highscore to the file
-        if (score > Integer.parseInt(highScore.split(":")[1]))                                                            //setting a new record, splitting the string into integer
+    public void CheckScore() {  //writes the highscore to the file
+        if (score > Integer.parseInt(highScore.split(":")[1]))  //setting a new record, splitting the string into integer
         {
-            frame = (JFrame) new Frame();
-            JOptionPane.showMessageDialog(frame, "");
-            String name = this.getName();
+            frame = new JFrame();
+            JOptionPane.showMessageDialog(frame, "New Highscore!");
+            String name = JOptionPane.showInputDialog("What is your name?");
             highScore = name + ":" + score;
 
             File scoreFile = new File("highscore.dat");
@@ -266,6 +266,10 @@ public class Game extends Canvas implements Runnable {
                 }
             }
         }
+    }
+
+    public boolean isMaster() {
+        return master;
     }
 
     public static void main(String args[]) {

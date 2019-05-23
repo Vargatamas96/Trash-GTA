@@ -11,11 +11,11 @@ public class Camera {
 
     public void tick(GameObject object){
 
-        x += ((object.getX() - x) - 1380/2) * 0.05f;                             //for smooth transactioning
+        x += ((object.getX() - x) - 1380/2) * 0.05f; //for smooth transactioning
         y += ((object.getY() - y) - 768/2) * 0.05f;
 
-        if (x <= 0) x = 0;                                                       //stopping the camera movement at the edge of the map
-        if (x >= 692) x = 692;                                                   //numbers are debugged, till it works -> no idea for why. Map size?
+        if (x <= 0) x = 0;  //stopping the camera movement at the edge of the map
+        if (x >= 692) x = 692;  //numbers are debugged, till it works -> no idea why. Map size?
         if (y <= 0) y = 0;
         if (y >= 785 + 16) y = 785 + 16;
 

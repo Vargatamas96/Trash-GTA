@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent;
 
 public class KeyInput extends KeyAdapter {
 
-    Handler handler;                                                        //no need for new instance
+    Handler handler;    //no need for new instance
     Game game;
 
     public KeyInput(Handler handler, Game game) {
@@ -17,7 +17,7 @@ public class KeyInput extends KeyAdapter {
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
 
-        for (int i = 0; i < handler.object.size(); i++) {                    //looping through object, then moving them
+        for (int i = 0; i < handler.object.size(); i++) {   //looping through object, then moving them
             GameObject tempObject = handler.object.get(i);
 
             if (tempObject.getId() == ID.PlayerMP) {
@@ -25,7 +25,7 @@ public class KeyInput extends KeyAdapter {
                 if (key == KeyEvent.VK_S) handler.setDown(true);
                 if (key == KeyEvent.VK_A) handler.setLeft(true);
                 if (key == KeyEvent.VK_D) handler.setRight(true);
-                if(key == KeyEvent.VK_R){                                     // reloading and stopping movement
+                if(key == KeyEvent.VK_R){   // reloading and stopping movement
                      handler.setUp(false);
                      handler.setDown(false);
                      handler.setLeft(false);

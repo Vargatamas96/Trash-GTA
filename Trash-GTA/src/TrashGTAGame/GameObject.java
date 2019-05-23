@@ -8,18 +8,21 @@ public abstract class GameObject {
     public float y;
     protected float velX = 0, velY = 0;
     protected ID id;
+    static int numberCounter = 1;
+    int number;
 
-    public GameObject(float x, float y, ID id) {                                           //for positions
+    public GameObject(float x, float y, ID id) {    //for positions
         this.x = x;
         this.y = y;
         this.id = id;
+        number = numberCounter++;
     }
 
-    public abstract void tick();                                                //updating the objects
+    public abstract void tick();    //updating the objects
 
-    public abstract void render(Graphics g);                                    //object drawing
+    public abstract void render(Graphics g);    //object drawing
 
-    public abstract Rectangle getBounds();                                      //for hit box or collision
+    public abstract Rectangle getBounds();  //for hit box or collision
 
     public float getX() {
         return x;
@@ -72,5 +75,9 @@ public abstract class GameObject {
 
     public void setId(ID id) {
         this.id = id;
+    }
+
+    public int getNumber() {
+        return number;
     }
 }

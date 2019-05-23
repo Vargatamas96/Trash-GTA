@@ -7,7 +7,7 @@ public abstract class Packet {
         LOGIN(00),
         DISCONNECT(01),
         MOVE(02),
-        SHOOT(03);
+        MOVECIV(03);
 
         private int packetId;
 

@@ -16,7 +16,7 @@ public class Spawn {
         this.game = game;
     }
 
-    public void tick() {
+    public void tick() { //spawns mobs at random places on the map
 
         if (game.ballasTrigger >= 1 && ballasCounter < game.ballasTrigger + 1) {
             handler.addObject(new Ballas(r.nextInt(Game.WIDTH), r.nextInt(Game.HEIGHT), ID.Ballas, handler, game, this));

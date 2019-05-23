@@ -26,7 +26,7 @@ public class PlayerChar extends GameObject {
 
             collision();
 
-            if (handler.isUp()) velY = -5;                                               //movement
+            if (handler.isUp()) velY = -5;  //movement
             else if (!handler.isDown()) velY = 0;
 
             if (handler.isDown()) velY = 5;
@@ -48,7 +48,7 @@ public class PlayerChar extends GameObject {
 
             GameObject tempObject = handler.object.get(i);
 
-            if (tempObject.getId() == ID.Block){                                     //collision with a block
+            if (tempObject.getId() == ID.Block){    //collision with a block
 
                 if(getBounds().intersects(tempObject.getBounds())){
                      x += velX * (-1);
@@ -56,7 +56,7 @@ public class PlayerChar extends GameObject {
                 }
 
             }
-            if (tempObject.getId() == ID.Civilian){                                  //collision with a civilian (might be easier with a || logic)
+            if (tempObject.getId() == ID.Civilian){ //collision with a civilian (might be easier with a || logic)
 
                 if(getBounds().intersects(tempObject.getBounds())){
                     x += velX * (-1);

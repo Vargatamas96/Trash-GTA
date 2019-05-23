@@ -1,8 +1,5 @@
 package TrashGTAGame;
 
-import Multiplayer.Packet02Move;
-import Multiplayer.Packet03Shoot;
-
 import java.awt.*;
 
 public class Bullet extends GameObject {
@@ -13,7 +10,7 @@ public class Bullet extends GameObject {
         super(x, y, id);
         this.handler = handler;
 
-        velX = (mx - x) / 10;                                                         //travel time
+        velX = (mx - x) / 10;  //travel time
         velY = (my - y) / 10;
     }
 
@@ -22,7 +19,7 @@ public class Bullet extends GameObject {
         x += velX;
         y += velY;
 
-        for (int i = 0; i < handler.object.size(); i++) {                              //bullet collision and removing bullet
+        for (int i = 0; i < handler.object.size(); i++) {  //bullet collision and removing bullet
             GameObject tempObject = handler.object.get(i);
 
             if (tempObject.getId() == ID.Block) {
@@ -31,8 +28,6 @@ public class Bullet extends GameObject {
                 }
             }
         }
-/*        Packet03Shoot packet = new Packet03Shoot(this.x, this.y,this.mx,this.my);
-        packet.writeData(Game.game.socketClient);*/
     }
 
 

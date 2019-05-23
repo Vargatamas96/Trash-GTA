@@ -22,7 +22,7 @@ public class Ballas extends GameObject {
 
         for (int i = 0; i < handler.object.size(); i++) {
             if (handler.object.get(i).getId() == ID.PlayerMP)
-                playerMP = handler.object.get(i);                     //checking the player
+                playerMP = handler.object.get(i);       //checking the player
         }
     }
 
@@ -61,8 +61,8 @@ public class Ballas extends GameObject {
 
             if (tempObject.getId() == ID.Block) {
                 if (getBoundsBig().intersects(tempObject.getBounds())) {
-                    x += (velX * 10) * (-1) + (playerMP.getX() - x)/(-70);                                                  //just a random idea
-                    y += (velY * 10) * (-1) + (playerMP.getY() - y)/(-70);                                                 //for wallstuck debugging
+                    x += (velX * 10) * (-1) + (playerMP.getX() - x)/(-70); //just a random idea
+                    y += (velY * 10) * (-1) + (playerMP.getY() - y)/(-70); //for wallstuck "debugging"
                     velX *= (-1);
                     velY *= (-1);
                 }

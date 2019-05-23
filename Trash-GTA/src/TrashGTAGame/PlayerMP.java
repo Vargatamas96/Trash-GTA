@@ -19,7 +19,7 @@ public class PlayerMP extends PlayerChar {
         this.username = username;
     }
 
-    public PlayerMP(int x, int y, String name, ID id, Game game, InetAddress ipAddress, int port) {                          //for local connection
+    public PlayerMP(int x, int y, String name, ID id, Game game, InetAddress ipAddress, int port) { //for local connection
         super(x, y, name, id, null, game);
         this.game = game;
         this.ipAddress = ipAddress;
@@ -29,7 +29,38 @@ public class PlayerMP extends PlayerChar {
     @Override
     public void tick() {
         super.tick();
+       // collision();
     }
+
+/*    private void collision() {
+        for (int i = 0; i < handler.object.size(); i++) {
+
+            GameObject tempObject = handler.object.get(i);
+
+            if (tempObject.getId() == ID.Block) {   //collision with a block
+
+                if (getBounds().intersects(tempObject.getBounds())) {
+                    x += velX * (-1);
+                    y += velY * (-1);
+                }
+
+            }
+            if (tempObject.getId() == ID.Civilian) {    //collision with a civilian (might be easier with a || logic)
+
+                if (getBounds().intersects(tempObject.getBounds())) {
+                    x += velX * (-1);
+                    y += velY * (-1);
+                }
+            }
+
+            if (tempObject.getId() == ID.EnemyBullet) {
+                if (getBounds().intersects(tempObject.getBounds())) {
+                    handler.removeObject(tempObject);
+                    game.hpPlayer -= 5;
+                }
+            }
+        }
+    }*/
 
     @Override
     public void render(Graphics g) {

@@ -1,6 +1,6 @@
 package TrashGTAGame;
 
-public enum ID {                                                //for deciding what's an object's purpose
+public enum ID {    //for deciding what's an object's purpose
 
     Player(),
     PlayerMP(),
@@ -10,6 +10,4 @@ public enum ID {                                                //for deciding w
     Police(),
     EnemyBullet(),
     Civilian();
-
-
 }

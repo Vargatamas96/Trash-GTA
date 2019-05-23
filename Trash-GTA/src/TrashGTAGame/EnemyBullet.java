@@ -12,7 +12,7 @@ public class EnemyBullet extends GameObject {
         super(x, y, id);
         this.handler = handler;
 
-        velX = (playerx - x) / 10;                                                         //travel time
+        velX = (playerx - x) / 10;  //travel time
         velY = (playery - y) / 10;
     }
 
@@ -21,7 +21,7 @@ public class EnemyBullet extends GameObject {
         x += velX;
         y += velY;
 
-        for (int i = 0; i < handler.object.size(); i++) {                              //bullet collision and removing bullet
+        for (int i = 0; i < handler.object.size(); i++) {   //bullet collision and removing bullet
             GameObject tempObject = handler.object.get(i);
 
             if (tempObject.getId() == ID.Block) {

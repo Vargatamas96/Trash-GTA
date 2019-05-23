@@ -37,8 +37,6 @@ public class GameClient extends Thread {
                 e.printStackTrace();
             }
             this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
-/*            String message = new String(packet.getData());
-            System.out.println("Server > " + message);*/
         }
     }
 
@@ -57,11 +55,13 @@ public class GameClient extends Thread {
             case DISCONNECT:
                 packet = new Packet01Disconnect(data);
                 System.out.println("[" + address.getHostAddress() + ":" + port + "] " + ((Packet01Disconnect) packet).getUsername() + "Has left the ghetto...");
-                //handler.removePlayerMP(((Packet01Disconnect) packet).getUsername());
                 break;
             case MOVE:
                 packet = new Packet02Move(data);
                 handleMove((Packet02Move) packet);
+            case MOVECIV:
+                packet = new Packet03MoveCiv(data);
+                handleMoveCiv((Packet03MoveCiv) packet);
         }
     }
 
@@ -83,4 +83,10 @@ public class GameClient extends Thread {
     private void handleMove(Packet02Move packet) {
         this.handler.movePlayer(packet.getUsername(), packet.getX(), packet.getY());
     }
+
+    private void handleMoveCiv(Packet03MoveCiv packet) {
+        this.handler.moveCivilian(packet.getX(), packet.getY(), packet.getIndex(), packet.getCount());
+    }
+
+
 }
